@@ -1,4 +1,8 @@
-const API_ROOT = "/api";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+const API_ROOT = backendUrl
+  ? `${backendUrl.replace(/\/$/, "")}/api`
+  : "/api";
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_ROOT}${path}`, {

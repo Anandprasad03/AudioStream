@@ -2,6 +2,17 @@ const userModel = require('../models/user.model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
+function getCookieOptions(req) {
+    const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https'
+
+    return {
+        httpOnly: true,
+        secure: isSecure,
+        sameSite: isSecure ? 'none' : 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+}
+
 async function register(req, res) {
     try {
         const { username, email, password, role = "user" } = req.body
@@ -30,7 +41,7 @@ async function register(req, res) {
             role: user.role
         }, process.env.JWT_SECRET)
 
-        res.cookie('token', token)
+        res.cookie('token', token, getCookieOptions(req))
 
         await user.save()
 
@@ -73,7 +84,7 @@ async function login(req, res) {
             role: user.role
         }, process.env.JWT_SECRET)
 
-        res.cookie('token', token)
+        res.cookie('token', token, getCookieOptions(req))
 
         res.json({
             message: 'Login successful',
@@ -90,7 +101,7 @@ async function login(req, res) {
 }
 
 async function logout(req, res) {
-    res.clearCookie('token')
+    res.clearCookie('token', getCookieOptions(req))
     res.json({ message: 'Logout successful' })
 }
 
