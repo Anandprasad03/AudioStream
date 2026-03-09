@@ -8,6 +8,8 @@ const CreatePost = ({ user, userRole }) => {
   const [albumSongs, setAlbumSongs] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [albumLoading, setAlbumLoading] = useState(false);
 
   const resetStatus = () => {
     setMessage("");
@@ -28,6 +30,7 @@ const CreatePost = ({ user, userRole }) => {
     formData.append("title", uploadTitle);
     formData.append("music", musicFile);
 
+    setUploadLoading(true);
     try {
       const { data } = await api.post("/api/music/upload", formData);
       setMessage(data.message);
@@ -36,6 +39,8 @@ const CreatePost = ({ user, userRole }) => {
       event.target.reset();
     } catch (err) {
       setError(err?.response?.data?.message || "Upload failed");
+    } finally {
+      setUploadLoading(false);
     }
   };
 
@@ -49,6 +54,7 @@ const CreatePost = ({ user, userRole }) => {
       .map((song) => song.trim())
       .filter(Boolean);
 
+    setAlbumLoading(true);
     try {
       const { data } = await api.post("/api/music/album", {
         title: albumTitle,
@@ -59,6 +65,8 @@ const CreatePost = ({ user, userRole }) => {
       setAlbumSongs("");
     } catch (err) {
       setError(err?.response?.data?.message || "Album creation failed");
+    } finally {
+      setAlbumLoading(false);
     }
   };
 
@@ -143,8 +151,8 @@ const CreatePost = ({ user, userRole }) => {
             </div>
 
             <div style={{ marginTop: "4px" }}>
-              <button type="submit" className="btn-primary" style={{ width: "100%" }}>
-                Upload Track
+              <button type="submit" className="btn-primary" style={{ width: "100%" }} disabled={uploadLoading}>
+                {uploadLoading ? (<><span className="spinner" /> Uploading…</>) : "Upload Track"}
               </button>
             </div>
           </form>
@@ -186,8 +194,8 @@ const CreatePost = ({ user, userRole }) => {
             </div>
 
             <div style={{ marginTop: "4px" }}>
-              <button type="submit" className="btn-primary" style={{ width: "100%" }}>
-                Create Album
+              <button type="submit" className="btn-primary" style={{ width: "100%" }} disabled={albumLoading}>
+                {albumLoading ? (<><span className="spinner" /> Creating…</>) : "Create Album"}
               </button>
             </div>
           </form>

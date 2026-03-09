@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
 
 const Feed = ({ user }) => {
   const [musics, setMusics] = useState([]);
   const [albums, setAlbums] = useState([]);
   const [error, setError] = useState("");
+  const [playingId, setPlayingId] = useState(null);
+  const [expandedAlbum, setExpandedAlbum] = useState(null);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (!user) return;
@@ -59,28 +62,43 @@ const Feed = ({ user }) => {
             </div>
           ) : (
             <div className="music-grid">
-              {musics.map((music, index) => (
-                <div key={music._id} className="music-item">
-                  <div className="music-item-left">
-                    <span className="music-index">{index + 1}</span>
-                    <div className="music-disc">♪</div>
-                    <div className="music-info">
-                      <div className="music-title">{music.name}</div>
-                      <div className="music-artist">
-                        {music.artist?.username || "Unknown artist"}
+              {musics.map((music, index) => {
+                const isPlaying = playingId === music._id;
+                return (
+                  <div key={music._id} className={`music-item ${isPlaying ? "music-item-active" : ""}`}>
+                    <div className="music-item-left">
+                      <span className="music-index">{index + 1}</span>
+                      <div className={`music-disc ${isPlaying ? "music-disc-playing" : ""}`}>♪</div>
+                      <div className="music-info">
+                        <div className="music-title">{music.name}</div>
+                        <div className="music-artist">
+                          {music.artist?.username || "Unknown artist"}
+                        </div>
                       </div>
                     </div>
+                    <button
+                      className={`music-play-btn ${isPlaying ? "playing" : ""}`}
+                      onClick={() => {
+                        if (isPlaying) {
+                          audioRef.current?.pause();
+                          setPlayingId(null);
+                        } else {
+                          if (audioRef.current) {
+                            audioRef.current.pause();
+                          }
+                          const audio = new Audio(music.uri);
+                          audioRef.current = audio;
+                          audio.play();
+                          audio.onended = () => setPlayingId(null);
+                          setPlayingId(music._id);
+                        }
+                      }}
+                    >
+                      {isPlaying ? "⏸ Pause" : "▶ Play"}
+                    </button>
                   </div>
-                  <a
-                    href={music.uri}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="music-play-link"
-                  >
-                    Play ↗
-                  </a>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -96,25 +114,38 @@ const Feed = ({ user }) => {
             </div>
           ) : (
             <div className="albums-grid">
-              {albums.map((album) => (
-                <div key={album._id} className="album-card">
-                  <div className="album-cover">💿</div>
-                  <div className="album-name">{album.name}</div>
-                  <div className="album-meta">
-                    by {album.artist?.username || "Unknown artist"}
+              {albums.map((album) => {
+                const isExpanded = expandedAlbum === album._id;
+                return (
+                  <div
+                    key={album._id}
+                    className={`album-card ${isExpanded ? "album-card-expanded" : ""}`}
+                    onClick={() => setExpandedAlbum(isExpanded ? null : album._id)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="album-cover">💿</div>
+                    <div className="album-name">{album.name}</div>
+                    <div className="album-meta">
+                      by {album.artist?.username || "Unknown artist"}
+                    </div>
+                    <div className="album-expand-hint">
+                      {isExpanded ? "▲ Hide tracks" : "▼ View tracks"}
+                    </div>
+                    {isExpanded && (
+                      <div className="album-songs-list album-songs-animated">
+                        <span>Tracklist</span>
+                        {(album.musics || []).length > 0
+                          ? (album.musics || []).map((song, i) => (
+                              <div key={song._id || i}>
+                                {i + 1}. {song.name}
+                              </div>
+                            ))
+                          : "No songs attached yet."}
+                      </div>
+                    )}
                   </div>
-                  <div className="album-songs-list">
-                    <span>Tracklist</span>
-                    {(album.musics || []).length > 0
-                      ? (album.musics || []).map((song, i) => (
-                          <div key={song._id || i}>
-                            {i + 1}. {song.name}
-                          </div>
-                        ))
-                      : "No songs attached yet."}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

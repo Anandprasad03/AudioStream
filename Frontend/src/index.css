@@ -761,6 +761,99 @@ button {
   border-color: var(--gold);
 }
 
+/* Inline play button */
+.music-play-btn {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  padding: 8px 14px;
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 8px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.music-play-btn:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  transform: none;
+  box-shadow: none;
+}
+
+.music-play-btn.playing {
+  color: #f08080;
+  border-color: rgba(224,85,85,0.35);
+}
+
+.music-play-btn.playing:hover {
+  background: rgba(224,85,85,0.08);
+  border-color: rgba(224,85,85,0.5);
+}
+
+.music-item-active {
+  border-color: rgba(201,168,76,0.3) !important;
+  background: rgba(201,168,76,0.04) !important;
+}
+
+.music-disc-playing {
+  animation: discSpin 2s linear infinite;
+  border-color: var(--gold) !important;
+  background: rgba(201,168,76,0.25) !important;
+}
+
+@keyframes discSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Album expand hint */
+.album-expand-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+  transition: color 0.2s;
+}
+
+.album-card:hover .album-expand-hint {
+  color: var(--gold);
+}
+
+.album-card-expanded {
+  border-color: rgba(201,168,76,0.25) !important;
+}
+
+.album-songs-animated {
+  animation: fadeInUp 0.25s ease forwards;
+}
+
+/* Spinner for loading buttons */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(10,10,11,0.25);
+  border-top-color: #0a0a0b;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 .album-card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
