@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import CreatePost from './pages/CreatePost'
 import Feed from './pages/Feed'
 import Navbar from './components/Navbar'
-import Auth from './pages/Auth'
+import Login from './pages/Login'
+import Register from './pages/Register'
 
 const App = () => {
   const [user, setUser] = useState(() => {
@@ -27,7 +28,8 @@ const App = () => {
     <Router>
       <Navbar user={user} onLogoutLocal={handleLogoutLocal} />
       <Routes>
-        <Route path="/" element={<Auth onAuthSuccess={handleAuthSuccess} />} />
+        <Route path="/" element={<Login onAuthSuccess={handleAuthSuccess} />} />
+        <Route path="/register" element={<Register onAuthSuccess={handleAuthSuccess} />} />
         <Route path="/library" element={<Feed user={user} />} />
         <Route path="/artist" element={<CreatePost user={user} userRole={userRole} />} />
       </Routes>

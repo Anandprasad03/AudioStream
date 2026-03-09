@@ -30,7 +30,6 @@ const CreatePost = ({ user, userRole }) => {
 
     try {
       const { data } = await api.post("/api/music/upload", formData);
-
       setMessage(data.message);
       setUploadTitle("");
       setMusicFile(null);
@@ -55,7 +54,6 @@ const CreatePost = ({ user, userRole }) => {
         title: albumTitle,
         musics,
       });
-
       setMessage(data.message);
       setAlbumTitle("");
       setAlbumSongs("");
@@ -68,9 +66,10 @@ const CreatePost = ({ user, userRole }) => {
   if (!user) {
     return (
       <section className="page">
-        <div className="card">
+        <div className="card locked-card">
+          <div className="locked-card-icon">🎙️</div>
           <h2>Artist Studio</h2>
-          <p>Please login first.</p>
+          <p>Please sign in to access the studio.</p>
         </div>
       </section>
     );
@@ -79,11 +78,12 @@ const CreatePost = ({ user, userRole }) => {
   if (userRole !== "artist") {
     return (
       <section className="page">
-        <div className="card">
+        <div className="card locked-card">
+          <div className="locked-card-icon">🎤</div>
           <h2>Artist Studio</h2>
           <p>
-            Only users with role <strong>artist</strong> can upload music and
-            create albums.
+            This space is reserved for <strong>artists</strong>. Register with
+            the artist role to upload music and build albums.
           </p>
         </div>
       </section>
@@ -92,54 +92,118 @@ const CreatePost = ({ user, userRole }) => {
 
   // =============== MAIN UI ===============
   return (
-    <section className="page stack-gap">
-      <div className="card">
-        <h2>Upload Music</h2>
-        <form onSubmit={handleUploadMusic} className="stack">
-          <input
-            type="text"
-            placeholder="Song title"
-            required
-            value={uploadTitle}
-            onChange={(e) => setUploadTitle(e.target.value)}
-          />
-
-          <input
-            type="file"
-            accept="audio/*"
-            required
-            onChange={(e) => setMusicFile(e.target.files?.[0] || null)}
-          />
-
-          <button type="submit">Upload</button>
-        </form>
+    <section className="page">
+      {/* Hero banner */}
+      <div className="studio-hero animate-in">
+        <div className="studio-hero-eyebrow">Artist Studio</div>
+        <h1>Make your mark.</h1>
+        <p>Upload tracks, build albums, and share your sound with the world.</p>
       </div>
 
-      <div className="card">
-        <h2>Create Album</h2>
-        <form onSubmit={handleCreateAlbum} className="stack">
-          <input
-            type="text"
-            placeholder="Album title"
-            required
-            value={albumTitle}
-            onChange={(e) => setAlbumTitle(e.target.value)}
-          />
+      <div className="grid-two">
+        {/* Upload Music */}
+        <div className="card animate-in animate-in-delay-1">
+          <h2>Upload a Track</h2>
+          <form onSubmit={handleUploadMusic} className="stack">
+            <div className="field-group">
+              <label className="field-label">Song Title</label>
+              <input
+                type="text"
+                placeholder="e.g. Midnight Drive"
+                required
+                value={uploadTitle}
+                onChange={(e) => setUploadTitle(e.target.value)}
+              />
+            </div>
 
-          <textarea
-            placeholder="Song names separated by commas"
-            rows="4"
-            required
-            value={albumSongs}
-            onChange={(e) => setAlbumSongs(e.target.value)}
-          />
+            <div className="field-group">
+              <label className="field-label">Audio File</label>
+              <div className={`upload-zone ${musicFile ? "has-file" : ""}`}>
+                <input
+                  type="file"
+                  accept="audio/*"
+                  required
+                  onChange={(e) => setMusicFile(e.target.files?.[0] || null)}
+                />
+                <div className="upload-zone-icon">
+                  {musicFile ? "✓" : "🎵"}
+                </div>
+                <div className="upload-zone-text">
+                  {musicFile ? (
+                    <strong>{musicFile.name}</strong>
+                  ) : (
+                    <>
+                      <strong>Click to browse</strong> or drag & drop
+                      <br />
+                      MP3, WAV, FLAC, AAC supported
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
 
-          <button type="submit">Create Album</button>
-        </form>
+            <div style={{ marginTop: "4px" }}>
+              <button type="submit" className="btn-primary" style={{ width: "100%" }}>
+                Upload Track
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Create Album */}
+        <div className="card animate-in animate-in-delay-2">
+          <h2>Create an Album</h2>
+          <form onSubmit={handleCreateAlbum} className="stack">
+            <div className="field-group">
+              <label className="field-label">Album Title</label>
+              <input
+                type="text"
+                placeholder="e.g. City of Stars"
+                required
+                value={albumTitle}
+                onChange={(e) => setAlbumTitle(e.target.value)}
+              />
+            </div>
+
+            <div className="field-group">
+              <label className="field-label">Song Names</label>
+              <textarea
+                placeholder="Enter song names separated by commas&#10;e.g. Midnight Drive, Golden Hour, Fade Away"
+                rows="5"
+                required
+                value={albumSongs}
+                onChange={(e) => setAlbumSongs(e.target.value)}
+              />
+              <span
+                style={{
+                  fontSize: "12px",
+                  color: "var(--text-muted)",
+                  marginTop: "4px",
+                }}
+              >
+                Separate each song name with a comma
+              </span>
+            </div>
+
+            <div style={{ marginTop: "4px" }}>
+              <button type="submit" className="btn-primary" style={{ width: "100%" }}>
+                Create Album
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
-      {message && <p className="message success">{message}</p>}
-      {error && <p className="message error">{error}</p>}
+      {message && (
+        <p className="message success" style={{ marginTop: "20px" }}>
+          ✓ {message}
+        </p>
+      )}
+      {error && (
+        <p className="message error" style={{ marginTop: "20px" }}>
+          ✕ {error}
+        </p>
+      )}
     </section>
   );
 };
