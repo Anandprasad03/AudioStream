@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { api } from "../api";
 
 const CreatePost = ({ user, userRole }) => {
   const [uploadTitle, setUploadTitle] = useState("");
@@ -29,11 +29,7 @@ const CreatePost = ({ user, userRole }) => {
     formData.append("music", musicFile);
 
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/music/upload`,
-        formData,
-        { withCredentials: true }
-      );
+      const { data } = await api.post("/api/music/upload", formData);
 
       setMessage(data.message);
       setUploadTitle("");
@@ -55,11 +51,10 @@ const CreatePost = ({ user, userRole }) => {
       .filter(Boolean);
 
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/music/album`,
-        { title: albumTitle, musics },
-        { withCredentials: true }
-      );
+      const { data } = await api.post("/api/music/album", {
+        title: albumTitle,
+        musics,
+      });
 
       setMessage(data.message);
       setAlbumTitle("");

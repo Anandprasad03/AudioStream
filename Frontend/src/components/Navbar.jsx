@@ -1,16 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../api";
 
 const Navbar = ({ user, onLogoutLocal }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await api.post("/api/auth/logout");
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {

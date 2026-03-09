@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../api";
 
 const Feed = ({ user }) => {
   const [musics, setMusics] = useState([]);
@@ -14,12 +14,8 @@ const Feed = ({ user }) => {
 
       try {
         const [musicRes, albumRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/music`, {
-            withCredentials: true,
-          }),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/music/albums`, {
-            withCredentials: true,
-          }),
+          api.get("/api/music"),
+          api.get("/api/music/albums"),
         ]);
 
         setMusics(musicRes.data.musics || []);

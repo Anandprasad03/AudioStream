@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { api } from "../api";
 
 const initialRegister = {
   username: "",
@@ -26,10 +26,7 @@ const Auth = ({ onAuthSuccess }) => {
     setError("");
 
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/register`,
-        registerForm
-      );
+      const { data } = await api.post("/api/auth/register", registerForm);
 
       setMessage(data.message);
       setRegisterForm(initialRegister);
@@ -55,11 +52,7 @@ const Auth = ({ onAuthSuccess }) => {
         payload.username = loginForm.identity;
       }
 
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        payload,
-        { withCredentials: true } // if backend uses cookies
-      );
+      const { data } = await api.post("/api/auth/login", payload);
 
       onAuthSuccess(data.user);
       setMessage(data.message);
