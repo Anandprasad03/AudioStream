@@ -7,7 +7,7 @@
 
 **A full-stack web application designed for seamless audio streaming and content management.**
 
-[Live Demo](https://audio-stream-inky.vercel.app) |
+[Live Demo](https://audio-stream-nine.vercel.app/) |
 [Documentation](https://github.com/Anandprasad03/AudioStream#readme) <!-- TODO: Add dedicated documentation link if available -->
 
 </div>
